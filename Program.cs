@@ -30,20 +30,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
-        
     });
 
 // Cấu hình email từ appsettings.json
 builder.Services.Configure<EmailSettings>(configuration.GetSection("Email"));
 
-// Cấu hình CORS để cho phép React Frontend
+// Cấu hình CORS để cho phép tất cả các nguồn gốc
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // React frontend URL
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.AllowAnyOrigin()   // Cho phép tất cả các nguồn gốc
+              .AllowAnyHeader()   // Cho phép tất cả các header
+              .AllowAnyMethod();  // Cho phép tất cả các phương thức HTTP
     });
 });
 
@@ -68,8 +67,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Sử dụng CORS để cho phép các yêu cầu từ React frontend
-app.UseCors("AllowReactApp");
+// Sử dụng CORS để cho phép tất cả các yêu cầu
+app.UseCors("AllowAll");
 
 // Bật các middleware cần thiết
 app.UseHttpsRedirection();
